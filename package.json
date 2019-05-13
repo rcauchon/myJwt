@@ -1,0 +1,22 @@
+{
+  "name": "myjwt",
+  "version": "1.0.0",
+  "description": "Web service to return a valide JWT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rcauchon/myJwt.git"
+  },
+  "author": "Remi Cauchon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rcauchon/myJwt/issues"
+  },
+  "homepage": "https://github.com/rcauchon/myJwt#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
