@@ -52,6 +52,13 @@ var verifyOptions = {
   algorithm: ["RS256"]
 };
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+}).use(express.json());
+
+
 // Method get GENTOKEN
 app.get('/genToken', function (req, res) {
   // Generate a token with the PRIVATE KEY
@@ -85,6 +92,38 @@ app.get('/verify', function (req, res) {
     return res.json({success: false, message: 'Auth token is not supplied'});
   }
 });
+
+// Method Post LOGIN -JSON
+app.post('/loginj', function (req, res) {
+
+  let username = req.body.username;
+  let password = req.body.password;
+
+  // call the database to validate password
+  let mockUsername = "admin";
+  let mockPassword = "password";
+
+  if (typeof username === "undefined" || typeof password === "undefined"){
+    return res.status(400).json({success: false, message: 'Missing required parameters username and password'});
+  }
+
+  if (username && password) {
+    if (username === mockUsername && password === mockPassword){
+      var token = jwt.sign({username: username}, privateKEY, signOptions);
+      return res.status(200).json({
+        success: true,
+        message: 'Authentication successful!',
+        token: token
+      });
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: 'Incorrect username or password'
+      });
+    }
+  } 
+});
+
 
 // Method Post LOGIN
 app.post('/login', function (req, res) {
