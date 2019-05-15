@@ -175,7 +175,15 @@ app.post('/login', function (req, res) {
   }
 });
 
+function showBanner() {
+  fs.readFile('banner/banner.txt', function (err, data){
+    if (err) throw err;
+    console.log(data.toString('ascii'));
+  });
+}
+
 // Listen port : 3000
 app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+  showBanner();
+  console.log('My JSON WEB TOKEN listening on port 3000!');
 });
