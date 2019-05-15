@@ -1,6 +1,6 @@
 // Service to get JWT 
-
-
+//
+//
 //
 // Example sur Medium Corporation
 // https://medium.com/@siddharthac6/json-web-token-jwt-the-right-way-of-implementing-with-node-js-65b8915d550e
@@ -27,12 +27,15 @@ var payload = {
 var privateKEY = fs.readFileSync('./keys/private.key', 'utf8');
 var publicKEY = fs.readFileSync('./keys/public.key', 'utf8');
 
-var i = 'Mysoft corp' ; // issuer
-var s = 'some@user.com' // Subject
-var a = 'http://mysoftcorp.in' // Audience
+var i = 'Mysoft corp'; // issuer
+var s = 'some@user.com'; // Subject
+var a = 'http://mysoftcorp.in'; // Audience
 
 var e = "1h";
 
+/**
+ * Sign Options
+ */
 var signOptions = {
   issuer: i,
   subject: s,
@@ -42,7 +45,7 @@ var signOptions = {
 };
 
 /*
-  JWT Verify
+ * JWT Verify Options exactly the same as SignOptions above
 */
 var verifyOptions = {
   issuer: i,
@@ -52,48 +55,62 @@ var verifyOptions = {
   algorithm: ["RS256"]
 };
 
-app.use(function(req, res, next) {
+// .use(express.json());
+/**
+ * Function USE
+ */
+app.use(function (req, res, next) {
   res.header("Access-Control-allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-}).use(express.json());
+});
+
+app.use(express.json());
 
 
-// Method get GENTOKEN
+/**
+ *  Method get GENTOKEN
+ */
 app.get('/genToken', function (req, res) {
   // Generate a token with the PRIVATE KEY
   var token = jwt.sign(payload, privateKEY, signOptions);
   res.send('Token: ' + token);
 });
 
-// Method get VERIFY
+/**
+ *  Method get VERIFY
+ */ 
 app.get('/verify', function (req, res) {
 
   let token = req.headers['x-access-token'] || req.headers['authorization'];
 
-  if (typeof token === "undefined"){
-    return res.json({success: false, message: 'Auth token is not supplied'});
+  if (typeof token === "undefined") {
+    return res.json({ success: false, message: 'Auth token is not supplied' });
   }
-  if (token.startsWith('Bearer ')){
+
+  if (token.startsWith('Bearer ')) {
     token = token.slice(7, token.length);
   }
+
   if (token) {
-    jwt.verify(token, publicKEY, verifyOptions, (err, decoded)=>{
+    jwt.verify(token, publicKEY, verifyOptions, (err, decoded) => {
       if (err) {
-        return res.json({success: false, message: 'Auth token is not valid: '+ err.message});
+        return res.json({ success: false, message: 'Auth token is not valid: ' + err.message });
       } else {
         //req.decoded = decoded;
         return res.send('JWT verication result: ' + JSON.stringify(decoded));
       }
     }
-  );
-   
+    );
+
   } else {
-    return res.json({success: false, message: 'Auth token is not supplied'});
+    return res.json({ success: false, message: 'Auth token is not supplied' });
   }
 });
 
-// Method Post LOGIN -JSON
+/*
+ * Method Post LOGIN -JSON
+ */
 app.post('/loginj', function (req, res) {
 
   let username = req.body.username;
@@ -103,13 +120,13 @@ app.post('/loginj', function (req, res) {
   let mockUsername = "admin";
   let mockPassword = "password";
 
-  if (typeof username === "undefined" || typeof password === "undefined"){
-    return res.status(400).json({success: false, message: 'Missing required parameters username and password'});
+  if (typeof username === "undefined" || typeof password === "undefined") {
+    return res.status(400).json({ success: false, message: 'Missing required parameters username and password' });
   }
 
   if (username && password) {
-    if (username === mockUsername && password === mockPassword){
-      var token = jwt.sign({username: username}, privateKEY, signOptions);
+    if (username === mockUsername && password === mockPassword) {
+      var token = jwt.sign({ username: username }, privateKEY, signOptions);
       return res.status(200).json({
         success: true,
         message: 'Authentication successful!',
@@ -121,27 +138,29 @@ app.post('/loginj', function (req, res) {
         message: 'Incorrect username or password'
       });
     }
-  } 
+  }
 });
 
 
-// Method Post LOGIN
+/*
+ * Method Post LOGIN with parameter
+ */
 app.post('/login', function (req, res) {
 
-  let username = req.query.username;
-  let password = req.query.password;
+  const username = req.query.username;
+  const password = req.query.password;
 
   // call the database to validate password
   let mockUsername = "admin";
   let mockPassword = "password";
 
-  if (typeof username === "undefined" || typeof password === "undefined"){
-    return res.status(400).json({success: false, message: 'Missing required parameters username and password'});
+  if (typeof username === "undefined" || typeof password === "undefined") {
+    return res.status(400).json({ success: false, message: 'Missing required parameters username and password' });
   }
 
   if (username && password) {
-    if (username === mockUsername && password === mockPassword){
-      var token = jwt.sign({username: username}, privateKEY, signOptions);
+    if (username === mockUsername && password === mockPassword) {
+      var token = jwt.sign({ username: username }, privateKEY, signOptions);
       return res.status(200).json({
         success: true,
         message: 'Authentication successful!',
@@ -153,7 +172,7 @@ app.post('/login', function (req, res) {
         message: 'Incorrect username or password'
       });
     }
-  } 
+  }
 });
 
 // Listen port : 3000
