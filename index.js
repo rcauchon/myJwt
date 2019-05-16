@@ -31,7 +31,7 @@ var i = 'Mysoft corp'; // issuer
 var s = 'some@user.com'; // Subject
 var a = 'http://mysoftcorp.in'; // Audience
 
-var e = "1h";
+var e = "120000";
 
 /**
  * Sign Options
@@ -60,8 +60,8 @@ var verifyOptions = {
  * Function USE
  */
 app.use(function (req, res, next) {
-  res.header("Access-Control-allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
 
@@ -98,7 +98,7 @@ app.get('/verify', function (req, res) {
         return res.json({ success: false, message: 'Auth token is not valid: ' + err.message });
       } else {
         //req.decoded = decoded;
-        return res.send('JWT verication result: ' + JSON.stringify(decoded));
+        return res.json({ success: true, token: decoded});
       }
     }
     );
